@@ -1,0 +1,306 @@
+.listItem {
+    display: grid;
+    grid-template-columns: 80px 60px 100px 1fr 80px auto 40px;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: #ffffff;
+    transition: background-color 0.2s ease;
+    align-items: center;
+    cursor: pointer;
+}
+
+.listItem:hover {
+    background-color: #f8f8f8;
+}
+
+.listItem.expanded {
+    background-color: #f0f8ff;
+    border-bottom: none;
+}
+
+/* Day column */
+.dayColumn {
+    grid-column: 1;
+}
+
+.dayTitle {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.dayDate {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Icon column */
+.iconColumn {
+    grid-column: 2;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+/* Temperature column */
+.tempColumn {
+    grid-column: 3;
+    display: flex;
+    align-items: center;
+}
+
+.highTemp {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.lowTemp {
+    font-size: 1.4rem;
+    color: #777;
+}
+
+/* Description column */
+.descColumn {
+    grid-column: 4;
+    padding: 0 16px;
+}
+
+.mainDescription {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.nightInfo {
+    display: flex;
+    align-items: center;
+    color: #666;
+    margin-top: 4px;
+    font-size: 0.9rem;
+}
+
+.moonIcon {
+    margin-right: 6px;
+}
+
+/* Precipitation column */
+.precipColumn {
+    grid-column: 5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: #0066cc;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.dropIcon {
+    margin-right: 4px;
+    color: #0066cc;
+}
+
+.precipValue {
+    color: #0066cc;
+}
+
+/* Recommendation column */
+.recColumn {
+    grid-column: 6;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+    padding-left: 20px;
+    min-width: 220px;
+}
+
+.recommendationItem {
+    background: #e0f0ff;
+    color: #0066cc;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* Expand toggle */
+.expandToggle {
+    grid-column: 7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+}
+
+.expandToggle:hover {
+    background-color: #e0e0e0;
+}
+
+/* Detailed expanded view */
+.detailedView {
+    background-color: #f0f8ff;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 16px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.detailCard {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.detailCard h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: #0066cc;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.detailItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.detailItem span:first-child {
+    color: #555;
+    font-weight: 500;
+}
+
+.detailItem span:last-child {
+    font-weight: 600;
+}
+
+/* Responsive styles */
+@media (max-width: 900px) {
+    .listItem {
+        grid-template-columns: 80px 60px 100px 1fr 40px;
+        grid-template-rows: auto auto;
+    }
+
+    .dayColumn {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .iconColumn {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .tempColumn {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .descColumn {
+        grid-column: 4;
+        grid-row: 1;
+    }
+
+    .expandToggle {
+        grid-column: 5;
+        grid-row: 1;
+    }
+
+    .precipColumn {
+        grid-column: 1;
+        grid-row: 2;
+        justify-content: flex-start;
+        margin-top: 12px;
+    }
+
+    .recColumn {
+        grid-column: 2 / span 3;
+        grid-row: 2;
+        padding-left: 0;
+        margin-top: 12px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .detailsGrid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .listItem {
+        grid-template-columns: 1fr 1fr 40px;
+        grid-template-rows: auto auto auto auto;
+        gap: 8px;
+    }
+
+    .dayColumn {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .iconColumn {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+    }
+
+    .expandToggle {
+        grid-column: 3;
+        grid-row: 1;
+    }
+
+    .tempColumn {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .descColumn {
+        grid-column: 1 / span 2;
+        grid-row: 3;
+        padding: 0;
+    }
+
+    .precipColumn {
+        grid-column: 2;
+        grid-row: 2;
+        justify-content: flex-end;
+        margin-top: 0;
+    }
+
+    .recColumn {
+        grid-column: 1 / span 2;
+        grid-row: 4;
+        padding: 0;
+        margin-top: 8px;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr;
+    }
+}
