@@ -1,17 +1,7 @@
 import { useState } from "react";
 import styles from "./WeatherListItem.module.css";
 
-type WeatherListItemProps = {
-  date: string;
-  dayOfWeek: string;
-  high: number;
-  low: number;
-  description: string;
-  nightDescription?: string;
-  precipitation: number;
-  recommendations: string[];
-  rawData?: any;
-};
+import type { WeatherListItemProps } from "../types/apiResponse";
 
 export default function WeatherListItem({
   date,
@@ -23,7 +13,7 @@ export default function WeatherListItem({
   precipitation,
   recommendations,
   rawData,
-}: WeatherListItemProps) {
+}: Readonly<WeatherListItemProps>) {
   const [expanded, setExpanded] = useState(false);
 
   const formattedDate = new Date(date).toLocaleDateString("en-US", {

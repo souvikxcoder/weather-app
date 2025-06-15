@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import type { ForecastItem } from "../../types/apiResponse";
 
 // Day of week mapping
 const getDayOfWeek = (date: Date): string => {
@@ -26,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // Extract city info first
     const cityInfo = response.data.city;
 
-    response.data.list.forEach((item: any) => {
+    (response.data.list as ForecastItem[]).forEach((item) => {
       const date = new Date(item.dt * 1000);
       const day = date.toISOString().split("T")[0];
       const temp = item.main.temp;
@@ -115,8 +116,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(weatherData);
   } catch (error) {
     console.error("API Error:", error);
-    // Fallback to mock data on error
-    res.status(200).json(mockWeatherData(city as string));
   }
 };
 

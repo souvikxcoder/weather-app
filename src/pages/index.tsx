@@ -2,22 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 import WeatherListItem from "../components/WeatherListItem";
 import styles from "../styles/Home.module.css";
-
-type WeatherData = {
-  date: string;
-  dayOfWeek: string;
-  high: number;
-  low: number;
-  description: string;
-  nightDescription?: string;
-  precipitation: number;
-  recommendations: string[];
-  rawData?: any;
-};
+import type { WeatherListItemProps } from "../types/apiResponse";
 
 export default function Home() {
   const [city, setCity] = useState("");
-  const [weatherData, setWeatherData] = useState<WeatherData[]>([]);
+  const [weatherData, setWeatherData] = useState<WeatherListItemProps[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,8 +23,12 @@ export default function Home() {
       );
       setWeatherData(response.data);
       setError("");
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Something went wrong");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error ?? "Something went wrong");
+      } else {
+        setError("Something went wrong");
+      }
       setWeatherData([]);
     } finally {
       setIsLoading(false);
