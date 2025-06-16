@@ -36,9 +36,13 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    sh '''
-                    docker run -d --name $CONTAINER_NAME -p $PORT:3000 $IMAGE_NAME
-                    '''
+                    withCredentials([string(credentialsId: 'OPENWEATHER_API_KEY', variable: 'OPENWEATHER_API_KEY')]) {
+                        sh '''
+                        docker run -d --name $CONTAINER_NAME -p $PORT:3000 \
+                          -e OPENWEATHER_API_KEY=$OPENWEATHER_API_KEY \
+                          $IMAGE_NAME
+                        '''
+                    }
                 }
             }
         }
