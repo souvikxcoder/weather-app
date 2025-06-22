@@ -2,6 +2,56 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import type { ForecastItem } from "../../types/apiResponse";
 
+/**
+ * @swagger
+ * /api/weather:
+ *   get:
+ *     summary: Get weather forecast for a city
+ *     description: |
+ *       Retrieves a 5-day weather forecast for the specified city, including:
+ *       - Daily high and low temperatures
+ *       - Weather descriptions for day and night
+ *       - Precipitation probability
+ *       - Daily recommendations based on weather conditions
+ *     tags:
+ *       - Weather
+ *     parameters:
+ *       - in: query
+ *         name: city
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: City name for which to retrieve weather forecast
+ *         example: "London"
+ *     responses:
+ *       200:
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/WeatherForecast'
+ *       400:
+ *         description: Bad request - City parameter is missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: City not found or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+
 // Day of week mapping
 const getDayOfWeek = (date: Date): string => {
   const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -116,6 +166,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(weatherData);
   } catch (error) {
     console.error("API Error:", error);
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        return res.status(404).json({ error: "City not found or invalid" });
+      } else {
+        return res.status(500).json({ error: "Error fetching weather data" });
+      }
+    }
+    
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
