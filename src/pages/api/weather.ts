@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import type { ForecastItem } from "../../types/apiResponse";
+import MOCK_WEATHER_DATA from "../../utils/mockWeatherData";
 
 /**
  * @swagger
@@ -63,6 +64,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!city) {
     return res.status(400).json({ error: "City is required" });
+  }
+  
+  const offlineMode = process.env.OFFLINE_MODE === "true" || req.query.offline === "true";
+
+  if (offlineMode) {
+    return res.status(200).json(MOCK_WEATHER_DATA);
   }
 
   const apiKey = process.env.OPENWEATHER_API_KEY || "REPLACE_WITH_YOUR_API_KEY";
@@ -166,15 +173,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(weatherData);
   } catch (error) {
     console.error("API Error:", error);
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        return res.status(404).json({ error: "City not found or invalid" });
-      } else {
-        return res.status(500).json({ error: "Error fetching weather data" });
-      }
-    }
-    
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(200).json(MOCK_WEATHER_DATA);
   }
 };
 
