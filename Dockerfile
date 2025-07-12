@@ -1,35 +1,44 @@
-# Use official Node.js image for build
+# Build stage
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 make g++ && ln -sf python3 /usr/bin/python
+
 # Copy dependency files
 COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN yarn install
+# Install all dependencies (including dev dependencies)
+RUN yarn install --frozen-lockfile
 
 # Copy all project files
 COPY . .
 
-# Build the app
+# Build the app in standalone mode
 RUN yarn build
 
-# Use a smaller image for running
+#######################
+#  RUNTIME CONTAINER  #
+#######################
 FROM node:20-alpine
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
-# Copy necessary files
-COPY --from=builder /app/package.json /app/yarn.lock ./
-RUN yarn install --production
-
-COPY --from=builder /app/.next .next
-COPY --from=builder /app/public public
-COPY --from=builder /app/next.config.ts .
-COPY --from=builder /app/tsconfig.json .
-COPY --from=builder /app/node_modules node_modules
+# Copy the standalone output from builder
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
 
 EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-CMD ["yarn", "start"]
+# The standalone server.js is the entry point
+CMD ["node", "server.js"]
